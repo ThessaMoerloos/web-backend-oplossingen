@@ -57,7 +57,16 @@ Moest de droom van vele wetenschappers werkelijkheid worden om naar Mars te vlie
                               )
                   );
 
+$individueelArtikel = false;
 
+  if ( isset( $_GET['id'] ))
+  {
+      $id = $_GET['id'];
+
+      if ( isset( $artikels[ $id ]) ) {
+        $individueelArtikel = true;
+      }
+  }
 
 
  ?>
@@ -76,20 +85,25 @@ Moest de droom van vele wetenschappers werkelijkheid worden om naar Mars te vlie
    </head>
    <body>
 
-<!-- Voor elke keer dat hij door foreach loopt gaat hij elke keer een andere id(en zijn waarde) aanspreken  -->
-     <?php foreach ($artikels as $id => $value): ?>
+     <?php if( !$individueelArtikel ): ?>
+         <!-- Voor elke keer dat hij door foreach loopt gaat hij elke keer een andere id(en zijn waarde) aanspreken  -->
+       <?php foreach ($artikels as $id => $value): ?>
 
-            <h1><?php echo $value["titel"] ?></h1>
+              <h1><?php echo $value["titel"] ?></h1>
 
-            <img src="img/<?php echo $value["afbeelding"] ?>" alt="<?php echo $value["afbeeldingBeschrijving"] ?>" />
+              <img src="img/<?php echo $value["afbeelding"] ?>" alt="<?php echo $value["afbeeldingBeschrijving"] ?>" />
 
-            <p> <?php echo substr( $value["inhoud"], 0, 50) . "..." ?></p>
+              <p> <?php echo substr( $value["inhoud"], 0, 50) . "..." ?></p>
 
-            <a href="opdracht-get.php?id=<?php echo $id ?>">Lees meer >></a>
+              <a href="opdracht-get.php?id=<?php echo $id ?>">Lees meer >></a>
 
 
-     <?php endforeach; ?>
+       <?php endforeach; ?>
 
+   <?php else: ?>
+      <h1><?= $artikels[$id]['titel'] ?></h1>
+
+   <?php endif ?>
 
    </body>
  </html>
