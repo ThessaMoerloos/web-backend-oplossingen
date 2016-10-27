@@ -102,6 +102,9 @@ $individueelArtikel = false;
 
    <?php else: ?>
       <h1><?= $artikels[$id]['titel'] ?></h1>
+      <img src="img/<?= $artikels[$id]['afbeelding'] ?>" alt="<?= $artikels[$id]['afbeeldingBeschrijving'] ?>" />
+
+      <p> <?= $artikels[$id]['inhoud'] ?></p>
 
    <?php endif ?>
 
