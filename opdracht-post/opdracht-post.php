@@ -1,6 +1,8 @@
 
 <?php
 
+//je moet je als An aanmelden in deze oefening ga je checken of an zich aanmeld.
+
   $password     = "123";
   $username     = "an";
   $Vergelijking = "";
@@ -37,9 +39,7 @@
         <h1>Oefening POST</h1>
 
         <form action="opdracht-post.php" method="post">
-
     			<ul>
-
     				<li>
     					<label for="username">Name:</label>
     					<input type="text" name="username" id="username">
