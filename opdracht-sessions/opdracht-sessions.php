@@ -2,20 +2,33 @@
 
 	session_start();
 
+// in de link opdracht-sessions.php?session=destroy
+	if ( isset( $_GET['session'] ) )
+		{
+				if ( $_GET['session']  == 'destroy' )
+				{
+						session_destroy( );
+						header( 'location: opdracht-sessions.php' );
+				}
+		}
 //van input velden id= email en nickname
 //$emailInput = $_POST["email"];
 //$nicknameInput = $_POST["nickname"];
 
 //moet hier staan anders komt error: undefined
-$emailInput= "";
-$nicknameInput="";
+//$emailInput= "";
+//$nicknameInput="";
 
 //als er op volgende is geklikt:
-if (isset($_POST["submit"])) {
+if (isset($_POST['submit'])) {
 
 	// de session-variable genaamd $email = de waarde die in de input velden staat
-	$_SESSION['$email'] = $emailInput;
-	$_SESSION['$nickname'] = $nicknameInput;
+	//$_SESSION['$email'] = $emailInput;
+	//$_SESSION['$nickname'] = $nicknameInput;
+
+	$_SESSION['email'] 		= $_POST['emailinput'];
+	$_SESSION['nickname'] = $_POST['nicknameinput'];
+
 }
 else {
 	echo "Voer je gegevens in.";
@@ -42,19 +55,22 @@ else {
                 <h2>Registratiepagina</h2>
                         <div class="facade-minimal" data-url="http://www.app.local/opdracht-sessions-pagina-01-registratie.php">
                             <h1>Deel 1: registratiegegevens</h1>
+
                             <form action="registratiegegevens.php" method="post">
                                 <ul>
                                     <li>
                                         <label for="email">e-mail</label>
-                                        <input type="text" name="email" id="email value="<?= $emailInput ?>">
+                                        <input type="text" name="emailinput" >
                                     </li>
                                     <li>
                                         <label for="nickname">nickname</label>
-                                        <input type="text" name="nickname" id="nickname value="<?= $nicknameInput ?>">
+                                        <input type="text" name="nicknameinput" >
                                     </li>
                                 </ul>
-                                <input type="submit" value="Volgende">
+                                <input type="submit" name="submit" value="Registreren">
                             </form>
+
+														<a href="opdracht-sessions.php?session=destroy">Verwijder deze Sessie</a>
                         </div>
 
                     <li>Werk via een POST-methode</li>

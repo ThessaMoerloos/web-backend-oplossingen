@@ -2,29 +2,33 @@
 
 	session_start();
 
+
+	echo "post:";
   var_dump( $_POST );
+
+	echo "en dump session:";
   var_dump( $_SESSION );
 
-$nicknameInput= "";
-$emailInput   = "";
+//$nicknameInput= "";
+//$emailInput   = "";
+
+//$naam = $_SESSION['nicknameinput'];
+//$email= $_SESSION['emailinput'];
 
 
-$straatInput  = "";
-$nummerInput  = "";
-$gemeenteInput= "";
-$postcodeInput= "";
 
 
-if (isset($_POST["submit"])) {
+if ( isset($_POST["submit"]) ) {
 
 	// de session-variable genaamd $email = de waarde die in de input velden staat
-	$_SESSION['$straat'] = $straatInput;
-	$_SESSION['$nummer'] = $nummerInput;
-  $_SESSION['$gemeente'] = $gemeenteInput;
-  $_SESSION['$postcode'] = $postcodeInput;
+	$_SESSION['straat'] 	= $_POST["straatInput"];
+	$_SESSION['nummer'] 	= $_POST["nummerInput"];
+  $_SESSION['gemeente'] = $_POST["gemeenteInput"];
+  $_SESSION['postcode'] = $_POST["postcodeInput"];
+
 }
 else {
-	echo "Voer je gegevens in.";
+	echo "Er is een error";
 }
 
  ?>
@@ -52,8 +56,10 @@ else {
                             <h1>Registratiegegevens</h1>
 
                             <ul>
-                                <li>e-mail: <?php var_dump($_SESSION['$email'])  ?></li>
-                                <li>nickname:  <?php echo $_SESSION['$nickname'] ?></li>
+															<li>nickname:  <?php echo ($_SESSION['nickname']) ?></li>
+                              <li>e-mail:    <?php echo("{$_SESSION['email']}") ; ?></li>
+
+
                             </ul>
 
                             <h1>Deel 2: adres</h1>
@@ -61,22 +67,22 @@ else {
                                 <ul>
                                     <li>
                                         <label for="straat">straat</label>
-                                        <input type="text" id="straat" <?= $straatInput ?>>
+                                        <input type="text" name="straatInput" >
                                     </li>
                                     <li>
                                         <label for="nummer">nummer</label>
-                                        <input type="number" id="nummer" <?= $nummerInput ?>>
+                                        <input type="number" name="nummerInput"  >
                                     </li>
                                     <li>
                                         <label for="gemeente">gemeente</label>
-                                        <input type="text" id="gemeente" <?= $gemeenteInput ?>>
+                                        <input type="text" name="gemeenteInput" >
                                     </li>
                                     <li>
                                         <label for="postcode">postcode</label>
-                                        <input type="text" id="postcode" <?= $postcodeInput ?>>
+                                        <input type="text" name="postcodeinput"  >
                                     </li>
                                 </ul>
-                                <input type="submit" value="Volgende">
+                                <input type="submit" name="submit" value="Volgende">
                             </form>
 
                             <a href="opdracht-sessions.php?">Vernietig deze sessie</a>
