@@ -1,30 +1,52 @@
 <?php
 
+//uitloggen:   cookie moet geunset worden voor elke echo, print of dump --> dus best bovenaan!
+if (isset( $_GET ['logout']) ){
+
+  //unset( $_COOKIE['authenticated'] );
+  setcookie( 'authenticated', '', time() - 1000 );
+  header('location: opdracht-cookies.php');
+}
+
+
+
               //systeem functie van php
 $bestandInfo	=	file_get_contents( 'cookieUser.txt' );
               // gaat alles in de file splitsen na een , en in user data zetten als array
 $userInfo		=	explode( ',', $bestandInfo ); // $userInfo[0] = jan , [1] = paswoord
 
 
-$bericht ="standaard";
+$bericht =" ";
+$inlogBericht = "Gelieve je in te loggen:";
 
 
 
-//als er geklikt is op submit = vergelijken of het overeenkomt met jan en zijn paswoord01
-if ( isset( $_POST[ 'submit' ] ) ){
-  //    wat er hieronder in html is getyped== $userInfo[0] = jan  && zelfde vergelijken met passwoord
-  if ( $_POST[ 'username' ] == $userInfo[0] && $_POST[ 'password' ] == $userInfo[ 1 ] )
-  {
-    setcookie( 'authenticated', true, time() + 3600 );
-    header( 'location: opdracht-cookies.php' );
+  //als er geklikt is op submit = vergelijken of het overeenkomt met jan en zijn paswoord01
+  if ( isset( $_POST['submit'] ) ){
+    //    wat er hieronder in html is getyped== $userInfo[0] = jan  && zelfde vergelijken met passwoord
+    if ( $_POST['username'] == $userInfo[0] && $_POST['password'] == $userInfo[1] )
+    {
+      // cookie aanmaken 'authenticated'
+      setcookie( 'authenticated', true, time()+ 3600 );
+      header( 'location: opdracht-cookies-login.php' );
+      $bericht = 'Succesvol ingelogd!';
+    }
+    else
+    { $bericht = 'Oei dat klopt niet, probeer nog eens.'; }
   }
-  else
-  {
-    $bericht = 'Oei dat klopt niet, probeer nog eens.';
-  }
+
+
+
+if (isset( $_COOKIE['authenticated']) ){
+  $inlogBericht = "Je bent ingelogd";
+
 }
 
-//var_dump($userData);
+
+
+
+
+var_dump($userInfo);
 
 
  ?>
@@ -44,14 +66,14 @@ if ( isset( $_POST[ 'submit' ] ) ){
         <h1>Opdracht cookies: deel 1</h1>
 
         <ul>
-
                 <div class="facade-minimal" data-url="http://www.app.local/opdracht-cookies-login.php">
 
                     <h1>Inloggen</h1>
 
-                    <?php echo $bericht ?>
+                    <p><?php echo $inlogBericht ?></p>
+                    <p><?php echo $bericht ?></p>
 
-                    <form>
+                    <form  method="post">
                         <ul>
                             <li>
                                 <label for="gebruikersnaam">gebruikersnaam</label>
@@ -62,8 +84,10 @@ if ( isset( $_POST[ 'submit' ] ) ){
                                 <input type="text" id="paswoord" name="password">
                             </li>
                         </ul>
-                        <input type="submit" name="submit">
+                        <input type="submit" name="submit" value="Log in">
                     </form>
+
+                    <a href="opdracht-cookies.php?logout=true">Uitloggen</a>
                 </div>
 
 
