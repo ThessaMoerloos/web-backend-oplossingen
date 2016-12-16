@@ -31,7 +31,7 @@ try {
 
     $bierenAsAr = array();
 
-// hier gaat hij per 1 rij die fetchen, en zolang er rijen zijn, die in de bieren steken [0] = 1e rij, [1] = 2e rij
+// hier gaat hij per 1 rij die fetchen/uit de db halen, en zolang er rijen zijn, die in de bieren steken [0] = 1e rij, [1] = 2e rij
 // binnen zo een [0],[1],.. kan je dan kolomnaam aanspreken daarom ASSOC-array
   while ( $queryResultaat = $statement->fetch(PDO::FETCH_ASSOC) )
   {
@@ -41,15 +41,16 @@ try {
   }
 
 
+
+//KOLOMNAMEN
+
   $kolomnamenArray = array();
 
 // eerste kolomnaam is leeg, zit net in de query, das u 1,2,3,4 en die heeft geen kolomnaam in de array, begint pas vanaf biernr
   $kolomnamenArray[]	=	'#';
 
-
-
 // we gaan 0 gebruiken, kan evengoed [1],2 of 3 gebruiken, die hebben allemaal de kolomnamen
-// $key => $bier  hier geven we de opmaak mee van de array rij [0] de eerste inhoud/rij
+// $kolomnaam => $kolomInhoud  hier geven we de opmaak mee van de array rij [0] de eerste inhoud/rij
   foreach( $bierenAsAr[0] as $kolomnaam => $kolomInhoud )
   {
     //we hebben enkel de kolomnamen nodig, dus die spreken we hier aan, kolominhoud hebben we niet nodig
@@ -61,10 +62,15 @@ try {
 } // einde try
 
 
+
+
+
 catch (Exception $e) {
   //specifieke error message
   $message = "Er is een probleem met de connectie " . $e->getmessage();
 }
+
+
 
 
  ?>
@@ -83,7 +89,7 @@ catch (Exception $e) {
 
        <h1>Overzicht van de bieren</h1>
 
-       
+
        <table>
 
            <thead>
