@@ -1,17 +1,12 @@
 <?php
 
   $message = " ";
+  $notFoundMessage = " ";
 
   try {
 
     // Connectie maken met de 'bieren' DATABASE
     $db = new PDO('mysql:host=localhost;dbname=bieren', 'root', 'root');
-
-
-  /*  if (isset($_POST['confirm'] )) {
-      $deleteConfirm	=	true;
-    }
-    */
 
 
     if (isset( $_POST['delete'] ))
@@ -39,6 +34,84 @@
       }
 
     }
+
+    if ( isset( $_POST['edit'] ) ) {
+
+      // de meegegeven brouwerid bij klikken van edit in $brouwernr steken
+        $brouwernr = $_POST['edit'];
+
+        // in de db zoeken naar de brouwer met de brouwerid van $brouwernr
+        $findQuery  = 'SELECT * FROM brouwers
+                       WHERE brouwernr = :brouwernr';
+
+        $statementFind = $db->prepare( $findQuery );
+
+        // zorgen dat in de findQuery de brouwernr uit de form zit.
+        $statementFind->bindValue(":brouwernr", $brouwernr);
+
+        $brouwerFound = $statementFind->execute();
+
+
+        // als er een resultaat is bij de SELECT - find brouwer query
+        if ( $brouwerFound ) {
+
+          //array klaarzetten om de gegevens in op te vangen van de brouwer
+          $brouwerFoundArray  = array();
+
+          //zolang er data [0], [1],... is gaat hij die als rijen steken in brouwerFoundArray
+          while ( $queryBrouwerFound =  $statementFind->fetch(PDO::FETCH_ASSOC)) {
+              $brouwerFoundArray[] = $queryBrouwerFound;
+                                    // hier enkel [0] = 1 rij
+          }
+        }
+        else {
+          $notFoundMessage = "De brouwerij kon niet worden gevonden.";
+        }
+
+    }
+
+
+
+    if ( isset($_POST['wijzigen'])) {
+
+      $id       = $_POST['id'];
+      $brnaam   = $_POST['brnaam'];
+      $adres    = $_POST['adres'];
+      $postcode = $_POST['postcode'];
+      $gemeente = $_POST['gemeente'];
+      $omzet    = $_POST['omzet'];
+
+      try {
+        $queryUpdate  = 'UPDATE brouwers
+                         SET brnaam = :brnaam, adres = :adres, postcode = :postcode, gemeente = :gemeente, omzet = :omzet
+                         WHERE brouwernr = :id';
+
+        $statementUpdate   = $db->prepare($queryUpdate);
+
+
+        $statementUpdate->bindValue(":id", $id);
+        $statementUpdate->bindValue(":brnaam", $brnaam);
+        $statementUpdate->bindValue(":adres", $adres);
+        $statementUpdate->bindValue(":postcode", $postcode);
+        $statementUpdate->bindValue(":gemeente", $gemeente);
+        $statementUpdate->bindValue(":omzet", $omzet);
+
+
+        $brouwerUpdated =   $statementUpdate->execute();
+
+        if ( $brouwerUpdated ) {
+          $message      = "Brouwerij succesvol aangepast.";
+
+        }
+
+      }
+      catch (PDOException $e) {
+        $message = "Er ging iets fout bij het wijzigen.";
+      }
+}
+
+
+
 
 
     $queryString	=	'SELECT * FROM brouwers';
@@ -94,7 +167,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Opdracht CRUD delete</title>
+        <title>CRUD Update</title>
         <link rel="stylesheet" href="http://web-backend.local/css/global.css">
         <link rel="stylesheet" href="http://web-backend.local/css/facade.css">
         <link rel="stylesheet" href="http://web-backend.local/css/directory.css">
@@ -111,42 +184,67 @@
                 text-indent:-1000px;
             }
 
-            .delete
-            {
-                width:16px;
-                height:16px;
-                background: url("http://web-backend.local/img/icon-delete.png") no-repeat;
-            }
+            .delete-button
+      			{
+      				background-color	:	transparent;
+      				border				    :	none;
+      				padding				    :	0px;
+      				cursor				    :	pointer;
+      			}
         </style>
 
         <section class="body">
 
             <h1>Opdracht CRUD delete </h1>
 
-          <!-- <?php var_dump($brouwersAsAr) ?> -->
+          <?php if ( $brouwerFound ): ?>
+            <?php var_dump($brouwerFoundArray) ?>
+          <?php endif ?>
 
-            <h3>Overzicht van de brouwers</h3>
 
             <?php if ( $message ): ?>
               <?php echo $message ?>
             <?php endif ?>
 
-<!--
-            <?php if ( $deleteConfirm ): ?>
-          		<div>
-          			Bent u zeker dat u deze datarij wil verwijderen?
-          			<form action="CRUD-delete.php" method="POST">
 
-          				<button type="submit" name="confirm" value=" <?php echo $deleteId ?> "> Ja </button>
+            <h3>Brouwer <?= $brouwerFoundArray[0]['brnaam'] ?> ( #<?= $brouwerFoundArray[0]['brouwernr'] ?> ) wijzigen:</h3>
 
-          				<button type="submit"> Nee </button>
+            <form action="CRUD-update.php" method="POST">
+                <ul>
 
-          			</form>
-          		</div>
-          	<?php endif ?>
-  -->
+                    <li><input type="hidden" name="id" value="<?= $brouwerFoundArray[0]['brouwernr'] ?>"></li>
 
-            <form action="CRUD-delete.php" method="POST">
+                    <li>
+                        <label for="brnaam">Brouwernaam</label>
+                        <input type="text" id="brnaam" name="brnaam" value= "<?= $brouwerFoundArray[0]['brnaam'] ?>" >
+                    </li>
+                    <li>
+                        <label for="adres">adres</label>
+                        <input type="text" id="adres" name="adres" value= "<?= $brouwerFoundArray[0]['adres'] ?>">
+                    </li>
+                    <li>
+                        <label for="postcode">postcode</label>
+                        <input type="text" id="postcode" name="postcode" value= "<?= $brouwerFoundArray[0]['postcode'] ?>">
+                    </li>
+                    <li>
+                        <label for="gemeente">gemeente</label>
+                        <input type="text" id="gemeente" name="gemeente" value= "<?= $brouwerFoundArray[0]['gemeente'] ?>">
+                    </li>
+                    <li>
+                        <label for="omzet">omzet</label>
+                        <input type="text" id="omzet" name="omzet" value= "<?= $brouwerFoundArray[0]['omzet'] ?>">
+                    </li>
+                </ul>
+                <input type="submit" value="Wijzigen" name="wijzigen" >
+            </form>
+
+
+          <br>
+
+          <h3>Overzicht van de brouwers</h3>
+
+
+            <form action="CRUD-update.php" method="POST">
 
               <table>
 
@@ -175,7 +273,7 @@
                            <td><?= $kolomInhoud ?></td>
                          <?php endforeach ?>
 
-                         <td> <!-- nog een kolom toevoegen -->
+                         <td> <!-- nog een kolom toevoegen = DELETE -->
              							<!-- button toevoegen die kan submitten met als value de nummer van de brouwer = brouwernr-->
                           <!-- POST gaat hier uit 'name' = delete de value pakken en die in het verwijder query steken-->
              							<button type="submit" name="delete" value="<?php echo $rijInhoudArray['brouwernr'] ?>" class="delete-button">
@@ -183,6 +281,13 @@
              							</button>
              						</td>
 
+                        <td> <!-- nog een kolom toevoegen = EDIT -->
+                         <!-- button toevoegen die kan submitten met als value de nummer van de brouwer = brouwernr-->
+                         <!-- POST gaat hier uit 'name' = edit de value pakken en die in het edit query steken-->
+                         <button type="submit" name="edit" value="<?php echo $rijInhoudArray['brouwernr'] ?>" class="edit-button">
+                           <img src="icon-edit.png" alt="Bewerken knop">
+                         </button>
+                        </td>
                      </tr>
 
 
