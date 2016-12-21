@@ -2,12 +2,23 @@
 
 	session_start();
 
+
+// als er al een sessie bestaat waar een email in zit
+	if ( isset($_SESSION['email']) ) {
+		// steek de inhoud van email in het form
+		$email = $_SESSION['email'];
+	}
+	else {
+		$email = "";
+	}
+
+// als er op de knop genereer paswoord is geduwd en een sessie var paswoord bevat
   if ( isset($_SESSION['password']) ) {
-    
+
     $password = $_SESSION['password'];
   }
   else {
-    $password = "";
+    $password = " ";
   }
 
 
@@ -30,11 +41,11 @@
 
 
     <h1>Registreren</h1>
-    <form action="registratie-proces.php" method="post">
+    <form action="registratie-proces.php" method="POST">
         <ul>
             <li>
                 <label for="email">e-mail</label>
-                <input type="text" id="email">
+                <input type="text" name="email" value="<?php echo $email ?>">
             </li>
             <li>
                 <label for="password">paswoord</label>

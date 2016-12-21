@@ -2,8 +2,10 @@
 
 	session_start();
 
-$password = array();
-$passwordString = "";
+	$password = array();
+	$passwordString = "";
+
+
 
 
 
@@ -12,10 +14,17 @@ $passwordString = "";
       $passwordString = GeneratePassword();
       $_SESSION['password'] = $passwordString;
 
+			if ( isset($_POST["email"]) ) {
+
+					 $_SESSION["email"]  =  $_POST["email"];
+			 }
+			 
       //zodat hij terug gaat naar security-login nadat hij het password gegenereerd heeft
-      // anders blijft hij na het maken vn het pw op deze pagina.
+      // anders blijft hij na het maken van het pw op deze pagina.
       header("location: security-login.php" );
   }
+
+
 
 
 
@@ -32,9 +41,9 @@ $passwordString = "";
 
     //var_dump($password);
 
-    $passwordString = implode($password);
+    $passwordString = implode($password); //turn the array into a string
 
-    return $passwordString; //turn the array into a string
+    return $passwordString;
 
   }
 
