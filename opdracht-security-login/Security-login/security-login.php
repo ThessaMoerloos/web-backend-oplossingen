@@ -21,6 +21,15 @@
     $password = " ";
   }
 
+	// als het email adres (niet) geldig is :notificatie
+	  if ( isset($_SESSION['notification']) ) {
+
+	    $notification = $_SESSION['notification'];
+	  }
+	  else {
+	    $notification = " ";
+	  }
+
 
  ?>
 
@@ -41,20 +50,26 @@
 
 
     <h1>Registreren</h1>
+
+		<?php if ( $notification ): ?>
+		        <?php echo $notification ?>
+		<?php endif; ?>
+
+
     <form action="registratie-proces.php" method="POST">
         <ul>
             <li>
-                <label for="email">e-mail</label>
+                <label for="email">E-mail</label>
                 <input type="text" name="email" value="<?php echo $email ?>">
             </li>
             <li>
-                <label for="password">paswoord</label>
-                <input type="text" value="<?php echo $password ?>">
-                <input type="submit" name="generatePassword" value="generatePassword">
+                <label for="password">Paswoord</label>
+                <input type="text"  name="wachtwoord" value="<?php echo $password ?>">
+                <input type="submit" name="generatePassword" value="Genereer Paswoord">
             </li>
         </ul>
 
-        <input type="submit" value="Registreer">
+        <input type="submit" name="register" value="Registreer">
 
     </form>
 
