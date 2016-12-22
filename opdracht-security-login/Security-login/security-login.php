@@ -52,7 +52,7 @@
     <h1>Registreren</h1>
 
 		<?php if ( $notification ): ?>
-		        <?php echo $notification ?>
+		      <?php echo $notification ?>
 		<?php endif; ?>
 
 

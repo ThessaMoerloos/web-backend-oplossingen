@@ -4,11 +4,13 @@
 
 	$password = array();
 	$passwordString = "";
+	$message="";
+	$email="standaard";
 
 
 
 
-
+	// paswoord maken en doorsturen naar securoity login
   if ( isset( $_POST[ 'generatePassword' ] ) )
   {
       $passwordString = GeneratePassword();
@@ -24,6 +26,11 @@
       header("location: security-login.php" );
   	}
 
+
+
+
+
+
 		//als op registreer knop wordt gedrukt
 	  if ( isset($_POST["register"]) ) {
 
@@ -33,7 +40,7 @@
 	      //nieuwe session
 	      session_start();
 
-				$message = "Registratie knop werkt";
+				//$message = "Registratie knop werkt";
 
 	      if ( isset($_POST["email"]) ) {
 
@@ -49,6 +56,7 @@
 						 //email is valid
 						  $_SESSION['notification'] = "";
 
+							// selecteren van email
 							try {
                 $db     =  new PDO("mysql:host=localhost;dbname=opdracht-security-login", "root", "root");
 
@@ -57,43 +65,103 @@
 
                 $statementCheckEmail = $db->prepare( $checkEmailQuery );
 
+
+								// Links: wat je gaat doorgeven aan de query $checkEmailQuery
+								// Rechts:wat er in het form staat ingevuld ophalen
                 $statementCheckEmail->bindValue(":emailForm", $email);
 
                 $userMailFound = $statementCheckEmail->execute();
 
-							}
-							catch (Exception $e) {
-                  //verbinging niet gelukt, foutboodschap + redirect registreerpagina
-                  $_SESSION['notification'] = "Er was een probleem met de verbinding met de database.";
-                  header( 'location: opdracht-security-login.php' );
-              }
+								//CHECKEN of de user zijn email al in de database zit met $userMailFound
+								// is de query leeg = user mail nog niet aanwezig = mag aangemaakt worden;
+								// zit er wel iets in: gaat hij hier true geven: en volgende code uitvoeren
+								if ($userMailFound) {
+
+									$userMailFoundArray = array();
+
+									while ( $userMailFound = $statementCheckEmail->fetch(PDO::FETCH_ASSOC) )
+								  {
+								    $userMailFoundArray[] =	$userMailFound;
+								  }
+
+									// is de QUERY LEEG = user mail nog niet aanwezig = mag aangemaakt worden in db;
+									//$var is either 0, empty, or not set at all; niet hetzelfde als isset want isset gaat 0 wel zien als iets
+									if ( empty($userMailFoundArray) ) {
+
+
+										// aanmaken van email in db
+										try {
+
+
+											$message = "geraken in try." . $email;
+
+
+
+											$db2 =  new PDO("mysql:host=localhost;dbname=opdracht-security-login", "root", "root");
+											// Connectie maken met de DATABASE
+
+											$insertEmailQuery	=	"INSERT INTO users ( email )
+																			 		 VALUES ( :emailForm )";
+
+											$insertEmailStatement = $db2->prepare( $insertEmailQuery );
+
+											// hier ga je de ingevulde waarde van de form linken aan de database plaatsen, waar het in moet gezet worden
+											// Links: wat je gaat doorgeven aan/in de query $insertEmailQuery =
+											// Rechts:wat er in het form staat ingevuld ophalen
+											$insertEmailStatement->bindValue( ':emailForm', $email );
+
+											// check: geeft terug of het gelukt is = true/false 0 of 1
+											$emailIsGeinsert = $insertEmailStatement->execute();
+
+
+											if ($emailIsGeinsert) {
+													$message = "Registratie knop werkt - email invoegen: " . $email;
+											}
+
+											else {
+
+												$message = "Insert is niet gelukt, false";
+
+											}
+
+
+										} // einde try na is empty = aanmaken email in DB
+
+
+										catch (Exception $e)
+										{
+											//specifieke error message
+											$message = "Er is een probleem met de connectie " . $e->getmessage();
+										}
+
+									} // einde if user mail is empty
+
+									// als er wel iets zit in de user email: bestaat de email al
+									else {
+										$message = "Het email adres bestaat al ";
+									}
+
+							} //einde if user mail found
+
+						} // einde try ophalen van email in db
+
+						catch (Exception $e)
+						{
+	              //verbinging niet gelukt, foutboodschap + redirect registreerpagina
+	              $_SESSION['notification'] = "Er was een probleem met de verbinding met de database.";
+	              header( 'location: opdracht-security-login.php' );
+            }
 
 
 
 
 
-
-					 } // einde validate email
+					} //einde if validate mail
 
 					 else {
 					 	$_SESSION['notification'] = "Het email adres is niet juist.";
 						header( 'location: security-login.php' ); // terug naar form op security login
 					 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -125,20 +193,10 @@
 
 
 
+	 if ( $message )
+	 {
+					echo $message;
+
+	}
+
  ?>
-
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title></title>
-	</head>
-	<body>
-
-
-				<?php if ( $message ): ?>
-				        <?php echo $message ?>
-				<?php endif; ?>
-
-	</body>
-</html>
