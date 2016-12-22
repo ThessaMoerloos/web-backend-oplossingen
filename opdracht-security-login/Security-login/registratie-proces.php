@@ -93,15 +93,19 @@
 										try {
 
 
-											$message = "geraken in try." . $email;
+											//$message 				= "geraken in try." . $email;
+											$salt         	=  uniqid(mt_rand(), true);
+                      $wachtwoordSalt =  $wachtwoord . $salt;
+                      $hashedWwSalted =  hash( 'sha512', $wachtwoordSalt );
+                      $lastloginTime	=  "NOW()";
 
 
 
 											$db2 =  new PDO("mysql:host=localhost;dbname=opdracht-security-login", "root", "root");
 											// Connectie maken met de DATABASE
 
-											$insertEmailQuery	=	"INSERT INTO users ( email )
-																			 		 VALUES ( :emailForm )";
+											$insertEmailQuery	=	"INSERT INTO users ( email, hashed_password, last_login_time, salt )
+																			 		 VALUES ( :emailForm, :hashed_password, :last_login_time, :salt   )";
 
 											$insertEmailStatement = $db2->prepare( $insertEmailQuery );
 
@@ -109,13 +113,16 @@
 											// Links: wat je gaat doorgeven aan/in de query $insertEmailQuery =
 											// Rechts:wat er in het form staat ingevuld ophalen
 											$insertEmailStatement->bindValue( ':emailForm', $email );
+											$insertEmailStatement->bindValue( ':hashed_password', $hashedWwSalted );
+											$insertEmailStatement->bindValue( ':last_login_time', $lastloginTime );
+											$insertEmailStatement->bindValue( ':salt', $salt );
 
 											// check: geeft terug of het gelukt is = true/false 0 of 1
 											$emailIsGeinsert = $insertEmailStatement->execute();
 
 
 											if ($emailIsGeinsert) {
-													$message = "Registratie knop werkt - email invoegen: " . $email;
+													$message = "Email ingevoegd: " . $email . "      hashedWwSalted:   " . $hashedWwSalted . "    salt: " . $salt . "     wachtwoord : " . $wachtwoord;
 											}
 
 											else {
