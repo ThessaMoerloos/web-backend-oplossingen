@@ -122,7 +122,17 @@
 
 
 											if ($emailIsGeinsert) {
+
 													$message = "Email ingevoegd: " . $email . "      hashedWwSalted:   " . $hashedWwSalted . "    salt: " . $salt . "     wachtwoord : " . $wachtwoord;
+
+													// Als value krijgt dit het e-mailadres geconcateneerd met een ',' en gevolgd door de SHA512 hash van het e-mailadres geconcateneerd met de salt
+													// we hangen de waardes aan elkaar dmv een , 
+													$valueCookie  =  $email . ',' . hash( 'sha512', $email . $randomSalt );
+													setcookie( 'login', $valueCookie, time() + 360 );
+
+													// als de email in toegevoegd aan de database en dus geregistreerd is => dashboard
+													header( 'location: dashboard.php' );
+
 											}
 
 											else {
